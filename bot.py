@@ -6,8 +6,8 @@ import logging
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Ciao, benvenuto su MenoBot 0.1")
 
-def echo(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+def help(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="I comandi disponibili sono:\n/start\n/help")
 
 def main() -> None:
 	updater = Updater(token='1917043976:AAFylwCoNSLUp230XHM_o_hUovpKJFnU164', use_context=True)
@@ -17,8 +17,10 @@ def main() -> None:
 	start_handler = CommandHandler('start', start)
 	dispatcher.add_handler(start_handler)
 
-	echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-	dispatcher.add_handler(echo_handler)
+	help_handler = MessageHandler(Filters.text & (~Filters.command), help)
+	dispatcher.add_handler(help_handler)
+	help_handler2 = CommandHandler('help', help)
+	dispatcher.add_handler(help_handler2)
 
 	updater.start_polling()
 	updater.idle()
