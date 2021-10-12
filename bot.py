@@ -1,6 +1,7 @@
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
+
 import logging
 import urllib.request
 from urllib.error import HTTPError,URLError
@@ -41,7 +42,7 @@ def parse_links(html_code):
 	return links
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Ciao, benvenuto su MenoBot 0.1")
+	context.bot.send_message(chat_id=update.effective_chat.id, text="Ciao, benvenuto su MenoBot 0.1")
 
 def help(update, context):
 	help_message = "I comandi disponibili sono:\n/start\n/help\n/html"
@@ -63,7 +64,11 @@ def html(update, context):
 	context.bot.send_message(chat_id=update.effective_chat.id, text=links)
 
 def main() -> None:
-	updater = Updater(token='1917043976:AAFylwCoNSLUp230XHM_o_hUovpKJFnU164', use_context=True)
+	# Reading token
+	with open("token", "r") as token_file:
+		mytoken = token_file.read()
+
+	updater = Updater(token=mytoken, use_context=True)
 	dispatcher = updater.dispatcher
 	logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
