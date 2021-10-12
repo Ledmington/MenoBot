@@ -9,6 +9,7 @@ from socket import timeout
 import re
 
 import help # Command
+import start # Command
 
 forbidden_extension = [".png", ".PNG", ".svg", ".jpg", ".JPG", ".jpeg", ".bmp", ".ico", ".gif"]
 links_regex = re.compile("((https?:)?\/\/(\w|\d|\.|\/|\-|\?|\=|\&|\;)*)")
@@ -43,9 +44,6 @@ def parse_links(html_code):
 
 	return links
 
-def start(update, context):
-	context.bot.send_message(chat_id=update.effective_chat.id, text="Ciao, benvenuto su MenoBot 0.1")
-
 def html(update, context):
 	main_page_url = "https://www.cardmarket.com/it/YuGiOh"
 	cards_list_url = "https://www.cardmarket.com/it/YuGiOh/Products/Singles"
@@ -70,7 +68,7 @@ def main() -> None:
 	dispatcher = updater.dispatcher
 	logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-	start_handler = CommandHandler('start', start)
+	start_handler = CommandHandler('start', start.start_command)
 	dispatcher.add_handler(start_handler)
 
 	help_handler = CommandHandler('help', help.help_command)
