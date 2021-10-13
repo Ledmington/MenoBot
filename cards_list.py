@@ -37,5 +37,5 @@ def get_cards_list(update, context):
 	cards = parse_cards(page_content)
 	message = ""
 	for c in cards:
-		message = message + c[0] + " (" + base_url + c[1] + ")\n"
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+		message = message + "<a href=\"" + base_url + c[1] + "\">" + c[0] + "</a>\n"
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
