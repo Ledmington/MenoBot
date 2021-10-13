@@ -1,6 +1,5 @@
-import urllib.request
-from urllib.error import HTTPError,URLError
 import re
+import utils
 
 cards_regex = re.compile("(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 
@@ -24,14 +23,7 @@ def get_cards_list(update, context):
 	cards_list_url = "https://www.cardmarket.com/en/YuGiOh/Products/Singles"
 	base_url = "https://www.cardmarket.com"
 
-	try:
-		response = urllib.request.urlopen(cards_list_url)
-	except (HTTPError, URLError) as error:
-		logging.error(" Data of \"%s\" not retrieved because %s\n", cards_list_url, error)
-	except ValueError:
-		logging.error(" Unknown url type\n")
-
-	page_content = response.read().decode("utf-8")
+	page_content = utils.download_html(cards_list_url)
 
 	cards = parse_cards(page_content)
 	message = ""

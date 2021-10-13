@@ -1,8 +1,5 @@
-import urllib.request
-from urllib.error import HTTPError,URLError
-import re
-
 import cards_list
+import utils
 
 def search_card(update, context):
 	base_url = "https://www.cardmarket.com"
@@ -14,14 +11,7 @@ def search_card(update, context):
 
 	query_string = "+".join(context.args)
 
-	try:
-		response = urllib.request.urlopen(search_query + query_string)
-	except (HTTPError, URLError) as error:
-		logging.error(" Data of \"%s\" not retrieved because %s\n", search_query + query_string, error)
-	except ValueError:
-		logging.error(" Unknown url type\n")
-
-	page_content = response.read().decode("utf-8")
+	page_content = utils.download_html(search_query + query_string)
 
 	cards = cards_list.parse_cards(page_content)
 
