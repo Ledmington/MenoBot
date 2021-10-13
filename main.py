@@ -24,8 +24,11 @@ def main() -> None:
 	help_handler = CommandHandler('help', help.help_command)
 	dispatcher.add_handler(help_handler)
 
-	card_list_handler = CommandHandler('list_most_wanted_cards', cards_list.get_cards_list)
-	dispatcher.add_handler(card_list_handler)
+	most_wanted_list_handler = CommandHandler('list_most_wanted_cards', cards_list.get_most_wanted_cards)
+	dispatcher.add_handler(most_wanted_list_handler)
+
+	my_card_list_handler = CommandHandler('list_my_cards', cards_list.get_my_cards)
+	dispatcher.add_handler(my_card_list_handler)
 
 	search_handler = CommandHandler('search', search.search_card)
 	dispatcher.add_handler(search_handler)
