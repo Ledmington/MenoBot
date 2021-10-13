@@ -23,7 +23,7 @@ def main() -> None:
 	help_handler = CommandHandler('help', help.help_command)
 	dispatcher.add_handler(help_handler)
 
-	html_handler = CommandHandler('get_cards', cards_list.get_cards_list)
+	html_handler = CommandHandler('list_most_wanted_cards', cards_list.get_cards_list)
 	dispatcher.add_handler(html_handler)
 
 	updater.start_polling()
