@@ -3,7 +3,7 @@ import utils
 
 WAITING_TO_ADD_CARD = 1
 
-interesting_cards = set()
+interesting_cards = []
 retrieved_cards = []
 base_url = "https://www.cardmarket.com"
 
@@ -16,7 +16,7 @@ def get_most_wanted_cards(update, context):
 	message = ""
 	for c in cards:
 		message += "<a href=\"" + base_url + c[1] + "\">" + c[0] + "</a>\n"
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def get_my_cards(update, context):
 	global interesting_cards
@@ -26,8 +26,9 @@ def get_my_cards(update, context):
 
 	message = "You are following " + str(len(interesting_cards)) + " cards.\n"
 	for c in interesting_cards:
-		message += "<a href=\"" + base_url + c[1] + "\">" + c[0] + "</a>\n"
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+		message += "<b>" + str(interesting_cards.index(c)+1) + "</b> <a href=\"" + base_url + c[1] + "\">" + c[0] + "</a>\n"
+
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def add_card(update, context) -> int:
 	search_query = "https://www.cardmarket.com/en/YuGiOh/Products/Singles?idCategory=5&idExpansion=0&idRarity=0&searchString="
@@ -55,7 +56,7 @@ def add_card(update, context) -> int:
 
 	message += "\nPlease type a number from 1 to " + str(len(retrieved_cards)) + " to choose that card."
 
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 	return WAITING_TO_ADD_CARD
 
@@ -67,10 +68,14 @@ def save_new_card(update, context) -> int:
 		return WAITING_TO_ADD_CARD
 
 	global interesting_cards
-	interesting_cards.add(retrieved_cards[selected_card])
+	interesting_cards.append(retrieved_cards[selected_card])
+	interesting_cards = list(set(interesting_cards))
 
 	message = "<b>" + retrieved_cards[selected_card][0] + "</b> added to list."
 
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 	return ConversationHandler.END
+
+def remove_card(update, context) -> int:
+	return 0
