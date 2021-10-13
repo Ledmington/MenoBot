@@ -2,7 +2,7 @@ import urllib.request
 from urllib.error import HTTPError,URLError
 import re
 
-cards_regex = re.compile("(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/]+<\/a>)")
+cards_regex = re.compile("(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 
 def parse_cards(html_code):
 	cards = cards_regex.findall(html_code)
