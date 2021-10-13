@@ -25,6 +25,7 @@ def main() -> None:
 			CommandHandler('list_most_wanted_cards', cards_list.get_most_wanted_cards),
 			CommandHandler('list_my_cards', cards_list.get_my_cards),
 			CommandHandler('add_card', cards_list.add_card),
+			CommandHandler('remove_card', cards_list.remove_card),
 			CommandHandler('search', search.search_card)
 		],
 		states = {

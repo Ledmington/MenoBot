@@ -1,5 +1,6 @@
 from telegram.ext import ConversationHandler
 import utils
+import re
 
 WAITING_TO_ADD_CARD = 1
 
@@ -73,9 +74,30 @@ def save_new_card(update, context) -> int:
 
 	message = "<b>" + retrieved_cards[selected_card][0] + "</b> added to list."
 
-	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
 
 	return ConversationHandler.END
 
-def remove_card(update, context) -> int:
-	return 0
+def remove_card(update, context):
+	input_string = " ".join(context.args)
+
+	if not re.match(r"\d+", input_string):
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid number.")
+		return
+
+	selected_card = int(input_string)-1
+
+	global interesting_cards
+	if len(interesting_cards) == 0:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards to remove.")
+		return
+
+	if selected_card >= len(interesting_cards):
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
+		return
+
+	removed_card = interesting_cards.pop(selected_card)
+
+	message = "<b>" + removed_card[0] + "</b> removed from list."
+
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
