@@ -19,3 +19,7 @@ def get_my_cards(update, context):
 	if len(interesting_cards) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You are following 0 cards.")
 		return
+
+	for c in interesting_cards:
+		message = message + "<a href=\"" + base_url + c[1] + "\">" + c[0] + "</a>\n"
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
