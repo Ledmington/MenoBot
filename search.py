@@ -9,7 +9,6 @@ def search_card(update, context):
 		return
 
 	query_string = "+".join(context.args)
-
 	page_content = utils.download_html(search_query + query_string)
 
 	cards = utils.parse_cards(page_content)
