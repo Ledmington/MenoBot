@@ -21,7 +21,6 @@ def parse_cards(html_code):
 	return card_names
 
 def get_cards_list(update, context):
-	main_page_url = "https://www.cardmarket.com/en/YuGiOh"
 	cards_list_url = "https://www.cardmarket.com/en/YuGiOh/Products/Singles"
 	base_url = "https://www.cardmarket.com"
 
