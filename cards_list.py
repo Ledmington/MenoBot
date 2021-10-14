@@ -10,9 +10,7 @@ def get_most_wanted_cards(update, context):
 	page_content = utils.download_html(utils.CardMarketURLs["cards_list"])
 	cards = utils.parse_cards(page_content)
 
-	message = ""
-	for c in cards:
-		message += "<a href=\"" + utils.CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
+	message = utils.compose_list(cards)
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def get_my_cards(update, context):
@@ -21,9 +19,7 @@ def get_my_cards(update, context):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You are following 0 cards.")
 		return
 
-	message = "You are following " + str(len(interesting_cards)) + " cards.\n"
-	for c in interesting_cards:
-		message += "<b>" + str(interesting_cards.index(c)+1) + "</b> <a href=\"" + utils.CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
+	message = "You are following " + str(len(interesting_cards)) + " cards.\n" + utils.compose_list(retrieved_cards, with_index=True)
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
@@ -45,11 +41,7 @@ def add_card(update, context) -> int:
 	# We keep only the first 5 results (the number should be global and changeable)
 	retrieved_cards = retrieved_cards[:5]
 	
-	message = ""
-	for c in retrieved_cards:
-		message += "<b>" + str(retrieved_cards.index(c)+1) + "</b> <a href=\"" + utils.CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
-
-	message += "\nPlease type a number from 1 to " + str(len(retrieved_cards)) + " to choose that card."
+	message = utils.compose_list(retrieved_cards, with_index=True) + "\nPlease type a number from 1 to " + str(len(retrieved_cards)) + " to choose that card."
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 

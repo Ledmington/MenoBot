@@ -36,3 +36,12 @@ def download_html(page_url):
 
 	page_content = response.read().decode("utf-8")
 	return page_content
+
+def compose_list(cards, with_index=False):
+	message = ""
+	for c in cards:
+		if with_index:
+			message += "<b>" + str(cards.index(c)+1) + "</b> "
+		message += "<a href=\"" + CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
+
+	return message
