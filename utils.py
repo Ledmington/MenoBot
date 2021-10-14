@@ -26,6 +26,18 @@ def parse_cards(html_code):
 	card_names = card_names[2:]
 	return card_names
 
+def get_price(card_page_url):
+	page_html = download_html(card_page_url)
+	price_match = re.search(r"\d+,\d\d €", page_html)
+
+	if price_match is None:
+		logging.error(" Price not found in \"" + card_page_url + "\"\n")
+		return
+
+	price = float(price_match.group())
+	print(f"Found price {price}\n")
+	return price
+
 def download_html(page_url):
 	try:
 		response = urllib.request.urlopen(page_url)
