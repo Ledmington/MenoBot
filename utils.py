@@ -4,6 +4,12 @@ import re
 
 cards_regex = re.compile(r"(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 
+CardMarketURLs = {
+	"base": "https://www.cardmarket.com",
+	"cards_list": "https://www.cardmarket.com/en/YuGiOh/Products/Singles",
+	"search_query": "https://www.cardmarket.com/en/YuGiOh/Products/Singles?idCategory=5&idExpansion=0&idRarity=0&searchString="
+}
+
 def parse_cards(html_code):
 	cards = cards_regex.findall(html_code)
 	card_names = []
