@@ -1,6 +1,7 @@
 import urllib.request
 from urllib.error import HTTPError,URLError
 import re
+import logging
 
 cards_regex = re.compile(r"(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 
@@ -34,19 +35,22 @@ def get_price(card_page_url):
 		logging.error(" Price not found in \"" + card_page_url + "\"\n")
 		return
 
-	price = float(price_match.group())
-	print(f"Found price {price}\n")
+	# Converting "x,yz €" to "x.yz"
+	price = float(price_match.group().split(r" €")[0].replace(",", "."))
+
 	return price
 
 def download_html(page_url):
+	page_content = ""
+
 	try:
 		response = urllib.request.urlopen(page_url)
+		page_content = response.read().decode("utf-8")
 	except (HTTPError, URLError) as error:
 		logging.error(" Data of \"%s\" not retrieved because %s\n", page_url, error)
 	except ValueError:
 		logging.error(" Unknown url type\n")
 
-	page_content = response.read().decode("utf-8")
 	return page_content
 
 def compose_list(cards, with_index=False):

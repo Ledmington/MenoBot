@@ -60,6 +60,8 @@ def save_new_card(update, context) -> int:
 
 	message = "<b>" + retrieved_cards[selected_card][0] + "</b> added to list."
 
+	message += "\nCurrent price: " + str(utils.get_price(utils.CardMarketURLs["base"]+retrieved_cards[selected_card][1])) + " €"
+
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
 
 	return ConversationHandler.END
