@@ -6,8 +6,7 @@ import help # Command
 import start # Command
 import cards_list # Command
 import search # Command
-
-WAITING_TO_ADD_CARD = 1
+from bot_states import States
 
 def main() -> None:
 	# Reading token
@@ -29,7 +28,7 @@ def main() -> None:
 			CommandHandler('search', search.search_card)
 		],
 		states = {
-			WAITING_TO_ADD_CARD: [MessageHandler(Filters.regex(r"\d+"), cards_list.save_new_card)]
+			States.WAITING_TO_ADD_CARD: [MessageHandler(Filters.regex(r"\d+"), cards_list.save_new_card)]
 		},
 		fallbacks = []
 	)

@@ -1,8 +1,7 @@
 from telegram.ext import ConversationHandler
 import utils
 import re
-
-WAITING_TO_ADD_CARD = 1
+from bot_states import States
 
 interesting_cards = []
 retrieved_cards = []
@@ -59,14 +58,14 @@ def add_card(update, context) -> int:
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
-	return WAITING_TO_ADD_CARD
+	return States.WAITING_TO_ADD_CARD
 
 def save_new_card(update, context) -> int:
 	selected_card = int(update.message.text)-1
 
 	if selected_card >= len(retrieved_cards):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
-		return WAITING_TO_ADD_CARD
+		return States.WAITING_TO_ADD_CARD
 
 	global interesting_cards
 	interesting_cards.append(retrieved_cards[selected_card])
