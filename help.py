@@ -1,5 +1,5 @@
 def help_command(update, context):
-	help_message = """I comandi disponibili sono:
+	help_message = """Available commands:
 					  <b>help</b> - Show a list of available commands
 					  <b>setup</b> - Start using MenoBot
 					  <b>list_most_wanted_cards</b> - Show most wanted cards on CardMarket
