@@ -3,7 +3,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 import logging
 
 import help # Command
-import start # Command
 import cards_list # Command
 import search # Command
 from bot_states import States
@@ -19,7 +18,6 @@ def main() -> None:
 
 	conv_handler = ConversationHandler(
 		entry_points = [
-			CommandHandler('start', start.start_command),
 			CommandHandler('help', help.help_command),
 			CommandHandler('list_most_wanted_cards', cards_list.get_most_wanted_cards),
 			CommandHandler('list_my_cards', cards_list.get_my_cards),
