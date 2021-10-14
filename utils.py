@@ -29,14 +29,16 @@ def parse_cards(html_code):
 
 def get_price(card_page_url):
 	page_html = download_html(card_page_url)
-	price_match = re.search(r"\d+,\d\d €", page_html)
+
+	# The "price trend" price is the second shown on page
+	price_match = re.findall(r"\d+,\d\d €", page_html)[1]
 
 	if price_match is None:
 		logging.error(" Price not found in \"" + card_page_url + "\"\n")
 		return
 
 	# Converting "x,yz €" to "x.yz"
-	price = float(price_match.group().split(r" €")[0].replace(",", "."))
+	price = float(price_match.split(r" €")[0].replace(",", "."))
 
 	return price
 
