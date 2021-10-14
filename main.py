@@ -1,6 +1,7 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
 import logging
+import os
 
 import help # Command
 import cards_list # Command
@@ -8,6 +9,10 @@ import search # Command
 from bot_states import States
 
 def main() -> None:
+	if not os.path.exists("token"):
+		print("File \"token\" not found.\nQuitting...")
+		quit()
+
 	# Reading token
 	with open("token", "r") as token_file:
 		mytoken = token_file.read()
