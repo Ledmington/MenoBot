@@ -13,15 +13,40 @@ retrieved_cards = []
 need_to_be_alive = True
 price_updater_thread = None
 
+timeout_seconds = 600
+min_timeout = 600   # 10 minutes
+max_timeout = 86400 # 24 hours
+
 # minimum timeout: 10 minutes
-def updater_thread_function(update, context, timeout=600):
+def updater_thread_function(update, context):
 	time_passed = 0
 	while need_to_be_alive == True:
-		if(time_passed >= timeout):
+		if(time_passed >= timeout_seconds):
 			time_passed = 0
 			update_all_prices(update, context)
 		time.sleep(10)
 		time_passed += 10
+
+def set_timeout(update, context):
+	input_string = " ".join(context.args)
+	timeout_regex = r"(\d\d?)(m|h)"
+
+	if not re.match(timeout_regex, input_string):
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid format.\nType a number and then \"m\" for minutes or \"h\" for hours.")
+		return
+
+	results = re.match(timeout_regex, input_string).groups()
+	new_timeout = int(results[0])
+	if results[1] == "m":
+		new_timeout *= 60
+	elif results[1] == "h":
+		new_timeout *= 60*60
+
+	if new_timeout<min_timeout or new_timeout>max_timeout:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid value.\nTimeout must be between 10 minutes and 24 hours.")
+		return
+
+	timeout_seconds = new_timeout
 
 def update_all_prices(update, context):
 	for c in interesting_cards:
@@ -112,7 +137,7 @@ def save_new_card(update, context) -> int:
 
 	global price_updater_thread
 	if price_updater_thread == None:
-		price_updater_thread = threading.Thread(target=updater_thread_function, args=(update, context, 60,))
+		price_updater_thread = threading.Thread(target=updater_thread_function, args=(update, context,))
 		price_updater_thread.start()
 
 	return ConversationHandler.END

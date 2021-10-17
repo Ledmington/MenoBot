@@ -30,7 +30,8 @@ def main() -> None:
 			CommandHandler('remove_card', cards_list.remove_card),
 			CommandHandler('search', search.search_card),
 			CommandHandler('update_all_prices', cards_list.update_all_prices),
-			CommandHandler('update_price', cards_list.update_price_command)
+			CommandHandler('update_price', cards_list.update_price_command),
+			CommandHandler('set_timeout', cards_list.set_timeout)
 		],
 		states = {
 			States.WAITING_TO_ADD_CARD: [MessageHandler(Filters.regex(r"\d+"), cards_list.save_new_card)]
@@ -49,8 +50,9 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		pass
 	finally:
-		print("Waiting for price-updater thread to die...")
-		global need_to_be_alive
-		cards_list.need_to_be_alive = False
 		global price_updater_thread
-		cards_list.price_updater_thread.join()
+		if cards_list.price_updater_thread is not None:
+			print("Waiting for price-updater thread to die...")
+			global need_to_be_alive
+			cards_list.need_to_be_alive = False
+			cards_list.price_updater_thread.join()
