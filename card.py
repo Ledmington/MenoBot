@@ -28,4 +28,6 @@ class Card:
 		return prices[-1][1]
 
 	def update_price(self, new_price):
-		self.prirces.append((float(new_price), datetime.datetime.now()))
+		if new_price < 0:
+			raise ValueError("Price can't be negative")
+		self.prices.append((float(new_price), datetime.datetime.now()))

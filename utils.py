@@ -27,7 +27,7 @@ def parse_cards(html_code):
 	card_names = card_names[2:]
 	return card_names
 
-def get_price(card_page_url):
+def download_price(card_page_url):
 	page_html = download_html(card_page_url)
 
 	# The "price trend" price is the second shown on page
