@@ -31,3 +31,9 @@ class Card:
 		if new_price < 0:
 			raise ValueError("Price can't be negative")
 		self.prices.append((float(new_price), datetime.datetime.now()))
+
+		# Automatically deleting all prices older than 30 days
+		oldest = list(filter(lambda price: (datetime.datetime.now() - price[1]).days >= 30, self.prices))
+		if len(oldest) > 0:
+			for old in oldest:
+				self.prices.remove(old)
