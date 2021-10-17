@@ -14,16 +14,42 @@ need_to_be_alive = True
 price_updater_thread = None
 
 # minimum timeout: 10 minutes
-def update_all_prices(timeout=600):
+def updater_thread_function(update, context, timeout=600):
 	time_passed = 0
 	while need_to_be_alive == True:
 		if(time_passed >= timeout):
 			time_passed = 0
-			for c in interesting_cards:
-				new_price = utils.download_price(c.get_url())
-				c.update_price(new_price)
+			update_all_prices(update, context)
 		time.sleep(10)
 		time_passed += 10
+
+def update_all_prices(update, context):
+	for c in interesting_cards:
+		force_update_price(c)
+
+def force_update_price(card):
+	new_price = utils.download_price(card.get_url())
+	card.update_price(new_price)
+
+def update_price_command(update, context):
+	input_string = " ".join(context.args)
+
+	if not re.match(r"\d+", input_string):
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid number.")
+		return
+
+	selected_card = int(input_string)-1
+
+	global interesting_cards
+	if len(interesting_cards) == 0:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards.")
+		return
+
+	if selected_card >= len(interesting_cards):
+		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
+		return
+
+	force_update_price(interesting_cards[selected_card])
 
 def get_most_wanted_cards(update, context):
 	page_content = utils.download_html(utils.CardMarketURLs["cards_list"])
@@ -86,7 +112,7 @@ def save_new_card(update, context) -> int:
 
 	global price_updater_thread
 	if price_updater_thread == None:
-		price_updater_thread = threading.Thread(target=update_all_prices, args=(10,))
+		price_updater_thread = threading.Thread(target=updater_thread_function, args=(update, context, 60,))
 		price_updater_thread.start()
 
 	return ConversationHandler.END

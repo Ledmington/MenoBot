@@ -7,6 +7,7 @@ import help # Command
 import cards_list # Command
 import search # Command
 from bot_states import States
+
 def main() -> None:
 	if not os.path.exists("token"):
 		print("File \"token\" not found.\nQuitting...")
@@ -27,7 +28,9 @@ def main() -> None:
 			CommandHandler('list_my_cards', cards_list.get_my_cards),
 			CommandHandler('add_card', cards_list.add_card),
 			CommandHandler('remove_card', cards_list.remove_card),
-			CommandHandler('search', search.search_card)
+			CommandHandler('search', search.search_card),
+			CommandHandler('update_all_prices', cards_list.update_all_prices),
+			CommandHandler('update_price', cards_list.update_price_command)
 		],
 		states = {
 			States.WAITING_TO_ADD_CARD: [MessageHandler(Filters.regex(r"\d+"), cards_list.save_new_card)]
