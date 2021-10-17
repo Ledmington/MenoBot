@@ -20,7 +20,7 @@ def get_my_cards(update, context):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You are following 0 cards.")
 		return
 
-	message = "You are following " + str(len(interesting_cards)) + " cards.\n" + utils.compose_list(retrieved_cards, with_index=True)
+	message = "You are following " + str(len(interesting_cards)) + " cards.\n" + utils.compose_list(interesting_cards, with_index=True)
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def add_card(update, context) -> int:

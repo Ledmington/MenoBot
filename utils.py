@@ -2,6 +2,7 @@ import urllib.request
 from urllib.error import HTTPError,URLError
 import re
 import logging
+from card import Card
 
 cards_regex = re.compile(r"(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 
@@ -60,6 +61,9 @@ def compose_list(cards, with_index=False):
 	for c in cards:
 		if with_index:
 			message += "<b>" + str(cards.index(c)+1) + "</b> "
-		message += "<a href=\"" + CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
+		if type(c) == type(Card("", "")):
+			message += "<a href=\"" + c.get_url() + "\">" + c.get_name() + "</a>\n"
+		else:
+			message += "<a href=\"" + CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
 
 	return message
