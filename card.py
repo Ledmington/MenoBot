@@ -11,8 +11,8 @@ class Card:
 	prices = []
 
 	def __init__(self, card_name, card_url):
-		self.name = card_name.copy()
-		self.url = card_url.copy()
+		self.name = card_name
+		self.url = card_url
 		self.prices.append((float(0), datetime.datetime.now()))
 
 	def get_name(self):

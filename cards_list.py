@@ -2,6 +2,7 @@ from telegram.ext import ConversationHandler
 import utils
 import re
 from bot_states import States
+from card import Card
 
 interesting_cards = []
 retrieved_cards = []
@@ -20,7 +21,6 @@ def get_my_cards(update, context):
 		return
 
 	message = "You are following " + str(len(interesting_cards)) + " cards.\n" + utils.compose_list(retrieved_cards, with_index=True)
-
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def add_card(update, context) -> int:
@@ -55,12 +55,14 @@ def save_new_card(update, context) -> int:
 		return States.WAITING_TO_ADD_CARD
 
 	global interesting_cards
-	interesting_cards.append(retrieved_cards[selected_card])
+	new_card = Card(retrieved_cards[selected_card][0], utils.CardMarketURLs["base"]+retrieved_cards[selected_card][1])
+	interesting_cards.append(new_card)
 	interesting_cards = list(set(interesting_cards))
 
 	message = "<b>" + retrieved_cards[selected_card][0] + "</b> added to list."
-
-	message += "\nCurrent price: " + str(utils.get_price(utils.CardMarketURLs["base"]+retrieved_cards[selected_card][1])) + " €"
+	current_price = utils.download_price(new_card.get_url())
+	new_card.update_price(current_price)
+	message += "\nCurrent price: " + str(current_price) + " €"
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
 
