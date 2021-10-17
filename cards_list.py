@@ -10,18 +10,23 @@ import time
 interesting_cards = []
 retrieved_cards = []
 
+need_to_be_alive = True
 price_updater_thread = None
 
 # minimum timeout: 10 minutes
 def update_all_prices(timeout=600):
-	while True:
-		time.sleep(timeout)
-		print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Started update")
-		for c in interesting_cards:
-			new_price = utils.download_price(c.get_url())
-			c.update_price(new_price)
-			print("New price for \"" + c.get_name() + "\": " + str(new_price) + " €")
-		print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Finished update\n")
+	time_passed = 0
+	while need_to_be_alive == True:
+		time.sleep(10)
+		time_passed += 10
+		if(time_passed >= timeout):
+			time_passed = 0
+			print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Started update")
+			for c in interesting_cards:
+				new_price = utils.download_price(c.get_url())
+				c.update_price(new_price)
+				print("New price for \"" + c.get_name() + "\": " + str(new_price) + " €")
+			print("[" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "] Finished update\n")
 
 def get_most_wanted_cards(update, context):
 	page_content = utils.download_html(utils.CardMarketURLs["cards_list"])
@@ -84,7 +89,7 @@ def save_new_card(update, context) -> int:
 
 	global price_updater_thread
 	if price_updater_thread == None:
-		price_updater_thread = threading.Thread(target=update_all_prices, args=(600,))
+		price_updater_thread = threading.Thread(target=update_all_prices, args=(10,))
 		price_updater_thread.start()
 
 	return ConversationHandler.END

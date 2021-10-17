@@ -7,7 +7,6 @@ import help # Command
 import cards_list # Command
 import search # Command
 from bot_states import States
-
 def main() -> None:
 	if not os.path.exists("token"):
 		print("File \"token\" not found.\nQuitting...")
@@ -42,4 +41,13 @@ def main() -> None:
 	updater.idle()
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		pass
+	finally:
+		print("Waiting for price-updater thread to die...")
+		global need_to_be_alive
+		cards_list.need_to_be_alive = False
+		global price_updater_thread
+		cards_list.price_updater_thread.join()
