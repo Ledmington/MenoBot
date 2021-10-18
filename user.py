@@ -1,5 +1,6 @@
 import threading
 import time
+import utils
 
 users = {}
 
@@ -9,7 +10,7 @@ class User:
 	price_updater_thread = None
 	retrieved_cards = []
 	interesting_cards = []
-	timeout_seconds = 3600 # 1 hour
+	timeout_seconds = 10 # 1 hour
 
 	def __init__(self, new_id):
 		if new_id <= 0:
@@ -32,12 +33,28 @@ class User:
 		while self.thread_needs_to_be_alive == True:
 			if(time_passed >= self.timeout_seconds):
 				time_passed = 0
-				self.update_all_prices(update, context)
+				self.update_all_prices()
 			time.sleep(10)
 			time_passed += 10
 
-	def remove_card(self, card_to_remove):
-		self.interesting_cards.remove(card_to_remove)
+	def update_all_prices(self):
+		for c in self.interesting_cards:
+			self.force_update_price(c)
+
+	def force_update_price(self, card):
+		new_price = utils.download_price(card.get_url())
+		card.update_price(new_price)
+
+	def remove_card(self, card_idx):
+		removed_card = self.interesting_cards.pop(card_idx)
+
+		# If no cards to follow, destroy price updater thread
+		if(len(self.interesting_cards) == 0):
+			self.thread_needs_to_be_alive = False
+			self.price_updater_thread.join()
+			self.price_updater_thread = None
+
+		return removed_card
 
 	def get_timeout(self):
 		return self.timeout_seconds

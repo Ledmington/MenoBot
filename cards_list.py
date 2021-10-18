@@ -34,13 +34,13 @@ def set_timeout(update, context):
 
 	timeout_seconds = new_timeout
 
-def update_all_prices(update, context):
-	for c in interesting_cards:
-		force_update_price(c)
+def update_all_prices_command(update, context):
+	current_user = user.users[update.effective_chat.id]
+	if len(current_user.get_interesting_cards()) == 0:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards.")
+		return
 
-def force_update_price(card):
-	new_price = utils.download_price(card.get_url())
-	card.update_price(new_price)
+	current_user.update_all_prices()
 
 def update_price_command(update, context):
 	input_string = " ".join(context.args)
@@ -51,16 +51,16 @@ def update_price_command(update, context):
 
 	selected_card = int(input_string)-1
 
-	global interesting_cards
-	if len(interesting_cards) == 0:
+	current_user = user.users[update.effective_chat.id]
+	if len(current_user.get_interesting_cards()) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards.")
 		return
 
-	if selected_card >= len(interesting_cards):
+	if selected_card >= len(current_user.get_interesting_cards()):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
 		return
 
-	force_update_price(interesting_cards[selected_card])
+	force_update_price(current_user.get_interesting_cards()[selected_card])
 
 def get_most_wanted_cards(update, context):
 	page_content = utils.download_html(utils.CardMarketURLs["cards_list"])
@@ -124,6 +124,7 @@ def save_new_card(update, context) -> int:
 
 def remove_card(update, context):
 	input_string = " ".join(context.args)
+	current_user = user.users[update.effective_chat.id]
 
 	if not re.match(r"\d+", input_string):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid number.")
@@ -131,17 +132,16 @@ def remove_card(update, context):
 
 	selected_card = int(input_string)-1
 
-	global interesting_cards
-	if len(interesting_cards) == 0:
+	if len(current_user.get_interesting_cards()) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards to remove.")
 		return
 
-	if selected_card >= len(interesting_cards):
+	if selected_card >= len(current_user.get_interesting_cards()):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
 		return
 
-	removed_card = interesting_cards.pop(selected_card)
+	removed_card = current_user.remove_card(selected_card)
 
-	message = "<b>" + removed_card[0] + "</b> removed from list."
+	message = "<b>" + removed_card.get_name() + "</b> removed from list."
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")

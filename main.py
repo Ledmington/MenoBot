@@ -32,7 +32,7 @@ def main() -> None:
 			CommandHandler('add_card', cards_list.add_card),
 			CommandHandler('remove_card', cards_list.remove_card),
 			CommandHandler('search', search.search_card),
-			CommandHandler('update_all_prices', cards_list.update_all_prices),
+			CommandHandler('update_all_prices', cards_list.update_all_prices_command),
 			CommandHandler('update_price', cards_list.update_price_command),
 			CommandHandler('set_timeout', cards_list.set_timeout)
 		],
