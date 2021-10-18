@@ -3,13 +3,15 @@ MenoBot is a Telegram bot designed to daily check price fluctuations of YuGiOh c
 
 ## Command List
 Available commands:
- * <b>help</b> - Show a list of available commands
- * <b>setup</b> - Start using MenoBot
- * <b>list_most_wanted_cards</b> - Show most wanted cards on CardMarket
- * <b>list_my_cards</b> - Show the cards you are following
- * <b>add_card</b> card - Start following a card
- * <b>remove_card</b> card_number - Stop following a card
- * <b>search</b> card - Looks for a card on CardMarket
+ * **help** - Show a list of available commands
+ * **list_most_wanted_cards** - Show most wanted cards on CardMarket
+ * **list_my_cards** - Show the cards you are following
+ * **add_card** card - Start following a card
+ * **remove_card** card_number - Stop following a card
+ * **search** card - Looks for a card on CardMarket
+ * **update_price** card_number - Forces price update of a card
+ * **update_prices** - Forces price update of all cards
+ * **set_timeout** timeout - Changes time to wait between price updates
 
 ### Requirements
 MenoBot requires Python library `python-telegram-bot`. You can obtain this library by running:
