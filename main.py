@@ -8,6 +8,10 @@ import cards_list # Command
 import search # Command
 from bot_states import States
 
+from user import User
+
+users = {}
+
 def main() -> None:
 	if not os.path.exists("token"):
 		print("File \"token\" not found.\nQuitting...")
@@ -23,6 +27,7 @@ def main() -> None:
 
 	conv_handler = ConversationHandler(
 		entry_points = [
+			CommandHandler('start', start_command),
 			CommandHandler('help', help.help_command),
 			CommandHandler('list_most_wanted_cards', cards_list.get_most_wanted_cards),
 			CommandHandler('list_my_cards', cards_list.get_my_cards),
@@ -43,6 +48,13 @@ def main() -> None:
 
 	updater.start_polling()
 	updater.idle()
+
+def start_command(update, context):
+	user_id = update.effective_chat.id
+	if user_id not in users.keys():
+		users[user_id] = User(user_id)
+	else:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="You are already registered.\nYour ID is " + str(user_id))
 
 if __name__ == "__main__":
 	try:
