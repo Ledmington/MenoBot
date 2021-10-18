@@ -7,13 +7,11 @@ import threading
 import datetime
 import time
 
-interesting_cards = []
-retrieved_cards = []
+import user
 
 need_to_be_alive = True
 price_updater_thread = None
 
-timeout_seconds = 600
 min_timeout = 600   # 10 minutes
 max_timeout = 86400 # 24 hours
 
@@ -84,12 +82,12 @@ def get_most_wanted_cards(update, context):
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def get_my_cards(update, context):
-	global interesting_cards
-	if len(interesting_cards) == 0:
+	my_cards = user.users[update.effective_chat.id].get_interesting_cards()
+	if len(my_cards) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You are following 0 cards.")
 		return
 
-	message = "You are following " + str(len(interesting_cards)) + " cards.\n" + utils.compose_list(interesting_cards, with_index=True)
+	message = "You are following " + str(len(my_cards)) + " cards.\n" + utils.compose_list(my_cards, with_index=True)
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 def add_card(update, context) -> int:
@@ -100,17 +98,17 @@ def add_card(update, context) -> int:
 	query_string = "+".join(context.args)
 	page_content = utils.download_html(utils.CardMarketURLs["search_query"] + query_string)
 
-	global retrieved_cards
-	retrieved_cards = utils.parse_cards(page_content)
+	current_user = user.users[update.effective_chat.id]
+	current_user.retrieved_cards = utils.parse_cards(page_content)
 
-	if len(retrieved_cards) == 0:
+	if len(current_user.retrieved_cards) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="No cards found.")
 		return
 
 	# We keep only the first 5 results (the number should be global and changeable)
-	retrieved_cards = retrieved_cards[:5]
+	current_user.retrieved_cards = current_user.retrieved_cards[:5]
 	
-	message = utils.compose_list(retrieved_cards, with_index=True) + "\nPlease type a number from 1 to " + str(len(retrieved_cards)) + " to choose that card."
+	message = utils.compose_list(current_user.retrieved_cards, with_index=True) + "\nPlease type a number from 1 to " + str(len(current_user.retrieved_cards)) + " to choose that card."
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
@@ -118,17 +116,16 @@ def add_card(update, context) -> int:
 
 def save_new_card(update, context) -> int:
 	selected_card = int(update.message.text)-1
+	current_user = user.users[update.effective_chat.id]
 
-	if selected_card >= len(retrieved_cards):
+	if selected_card >= len(current_user.retrieved_cards):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid card number.\nTry another one.")
 		return States.WAITING_TO_ADD_CARD
 
-	global interesting_cards
-	new_card = Card(retrieved_cards[selected_card][0], utils.CardMarketURLs["base"]+retrieved_cards[selected_card][1])
-	interesting_cards.append(new_card)
-	interesting_cards = list(set(interesting_cards))
+	new_card = Card(current_user.retrieved_cards[selected_card][0], utils.CardMarketURLs["base"]+current_user.retrieved_cards[selected_card][1])
+	current_user.add_card(new_card)
 
-	message = "<b>" + retrieved_cards[selected_card][0] + "</b> added to list."
+	message = "<b>" + current_user.retrieved_cards[selected_card][0] + "</b> added to list."
 	current_price = utils.download_price(new_card.get_url())
 	new_card.update_price(current_price)
 	message += "\nCurrent price: " + str(current_price) + " €"

@@ -8,9 +8,7 @@ import cards_list # Command
 import search # Command
 from bot_states import States
 
-from user import User
-
-users = {}
+import user
 
 def main() -> None:
 	if not os.path.exists("token"):
@@ -51,8 +49,8 @@ def main() -> None:
 
 def start_command(update, context):
 	user_id = update.effective_chat.id
-	if user_id not in users.keys():
-		users[user_id] = User(user_id)
+	if user_id not in user.users.keys():
+		user.users[user_id] = user.User(user_id)
 	else:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You are already registered.\nYour ID is " + str(user_id))
 
