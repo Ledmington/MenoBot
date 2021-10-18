@@ -3,9 +3,7 @@ import utils
 import re
 from bot_states import States
 from card import Card
-import threading
 import datetime
-import time
 
 import user
 
@@ -14,16 +12,6 @@ price_updater_thread = None
 
 min_timeout = 600   # 10 minutes
 max_timeout = 86400 # 24 hours
-
-# minimum timeout: 10 minutes
-def updater_thread_function(update, context):
-	time_passed = 0
-	while need_to_be_alive == True:
-		if(time_passed >= timeout_seconds):
-			time_passed = 0
-			update_all_prices(update, context)
-		time.sleep(10)
-		time_passed += 10
 
 def set_timeout(update, context):
 	input_string = " ".join(context.args)
@@ -123,7 +111,7 @@ def save_new_card(update, context) -> int:
 		return States.WAITING_TO_ADD_CARD
 
 	new_card = Card(current_user.retrieved_cards[selected_card][0], utils.CardMarketURLs["base"]+current_user.retrieved_cards[selected_card][1])
-	current_user.add_card(new_card)
+	current_user.add_card(new_card, update, context)
 
 	message = "<b>" + current_user.retrieved_cards[selected_card][0] + "</b> added to list."
 	current_price = utils.download_price(new_card.get_url())
@@ -131,11 +119,6 @@ def save_new_card(update, context) -> int:
 	message += "\nCurrent price: " + str(current_price) + " €"
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
-
-	global price_updater_thread
-	if price_updater_thread == None:
-		price_updater_thread = threading.Thread(target=updater_thread_function, args=(update, context,))
-		price_updater_thread.start()
 
 	return ConversationHandler.END
 

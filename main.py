@@ -60,9 +60,12 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		pass
 	finally:
-		global price_updater_thread
-		if cards_list.price_updater_thread is not None:
-			print("Waiting for price-updater thread to die...")
-			global need_to_be_alive
-			cards_list.need_to_be_alive = False
-			cards_list.price_updater_thread.join()
+		users_to_kill = list(user.users.values())
+		print(str(len(users_to_kill)) + " user objects to kill\n")
+		for u in users_to_kill:
+			u.thread_needs_to_be_alive = False
+
+		for u in users_to_kill:
+			if u.price_updater_thread is not None:
+				print("[" + str(users_to_kill.index(u)+1) + "/" + str(len(users_to_kill)) + "] Waiting for price-updater thread to die...")
+				u.price_updater_thread.join()
