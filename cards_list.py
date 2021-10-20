@@ -122,15 +122,26 @@ def save_new_card(update, context) -> int:
 
 	return ConversationHandler.END
 
-def remove_card(update, context):
-	input_string = " ".join(context.args)
+def remove_command(update, context) -> int:
+	my_cards = user.users[update.effective_chat.id].get_interesting_cards()
+	if len(my_cards) == 0:
+		context.bot.send_message(chat_id=update.effective_chat.id, text="You are following 0 cards.")
+		return ConversationHandler.END
+
+	message = "You are following " + str(len(my_cards)) + " cards.\n" + utils.compose_list(my_cards, with_index=True)
+	message += "\n\nPlease type the number of the card you want to remove."
+	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
+
+	return States.WAITING_TO_REMOVE_CARD
+
+def remove_card(update, context) -> int:
 	current_user = user.users[update.effective_chat.id]
 
-	if not re.match(r"\d+", input_string):
+	if not re.match(r"\d+", update.message.text):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid number.")
 		return
 
-	selected_card = int(input_string)-1
+	selected_card = int(update.message.text)-1
 
 	if len(current_user.get_interesting_cards()) == 0:
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards to remove.")
@@ -145,3 +156,5 @@ def remove_card(update, context):
 	message = "<b>" + removed_card.get_name() + "</b> removed from list."
 
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+
+	return ConversationHandler.END
