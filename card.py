@@ -25,7 +25,7 @@ class Card:
 		return self.prices
 
 	def get_last_update(self):
-		return prices[-1][1]
+		return self.prices[-1][0]
 
 	def update_price(self, new_price):
 		if new_price < 0:

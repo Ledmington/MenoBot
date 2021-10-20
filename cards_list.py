@@ -40,7 +40,7 @@ def update_all_prices_command(update, context):
 		context.bot.send_message(chat_id=update.effective_chat.id, text="You have no cards.")
 		return
 
-	current_user.update_all_prices()
+	current_user.update_all_prices(update, context)
 
 def update_price_command(update, context):
 	input_string = " ".join(context.args)

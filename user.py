@@ -11,7 +11,7 @@ class User:
 	retrieved_cards = []
 	interesting_cards = []
 	price_difference = 0.01 # 1%
-	timeout_seconds = 10 # 1 hour
+	timeout_seconds = 3600 # 1 hour
 
 	def __init__(self, new_id):
 		if new_id <= 0:
@@ -26,6 +26,7 @@ class User:
 		self.interesting_cards = list(set(self.interesting_cards))
 
 		if self.price_updater_thread == None:
+			self.thread_needs_to_be_alive = True
 			self.price_updater_thread = threading.Thread(target=self.__updater_thread_function__, args=(update, context,))
 			self.price_updater_thread.start()
 
@@ -38,19 +39,22 @@ class User:
 			time.sleep(10)
 			time_passed += 10
 
-	def update_all_prices(self, context, update):
+	def update_all_prices(self, update, context):
 		message = ""
 		for c in self.interesting_cards:
-			price_changed = self.force_update_price(c, context, update)
-			message += "<a href=\"" + c.get_url() + "\"><b>" + c.get_name() + "</b></a> has changed price to " + str(c.get_last_update) + "\n"
-		context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML")
+			price_changed = self.force_update_price(c)
+			if price_changed:
+				message += "<a href=\"" + c.get_url() + "\"><b>" + c.get_name() + "</b></a> has changed price to " + str(c.get_last_update()).replace(".", ",") + " €\n"
+
+		if message is not None:
+			context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 	def force_update_price(self, card):
 		new_price = utils.download_price(card.get_url())
 		last_price = card.get_last_update()
 		card.update_price(new_price)
 
-		return abs(new_price - last_price) / min(new_price, last_price) >= price_difference
+		return abs(new_price - last_price) / min(new_price, last_price) >= self.price_difference
 
 	def remove_card(self, card_idx):
 		removed_card = self.interesting_cards.pop(card_idx)
