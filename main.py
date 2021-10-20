@@ -29,7 +29,7 @@ def main() -> None:
 			CommandHandler('help', help.help_command),
 			CommandHandler('list_most_wanted_cards', cards_list.get_most_wanted_cards),
 			CommandHandler('list_my_cards', cards_list.get_my_cards),
-			CommandHandler('add_card', cards_list.add_card),
+			CommandHandler('add', cards_list.add_command),
 			CommandHandler('remove_card', cards_list.remove_card),
 			CommandHandler('search', search.search_card),
 			CommandHandler('update_all_prices', cards_list.update_all_prices_command),
@@ -37,6 +37,7 @@ def main() -> None:
 			CommandHandler('set_timeout', cards_list.set_timeout)
 		],
 		states = {
+			States.WAITING_TO_SEARCH_CARD: [MessageHandler(Filters.regex(r"[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+"), cards_list.add_card)],
 			States.WAITING_TO_ADD_CARD: [MessageHandler(Filters.regex(r"\d+"), cards_list.save_new_card)]
 		},
 		fallbacks = []

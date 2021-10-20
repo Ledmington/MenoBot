@@ -13,7 +13,7 @@ class Card:
 	def __init__(self, card_name, card_url):
 		self.name = card_name
 		self.url = card_url
-		self.prices.append((float(0), datetime.datetime.now()))
+		self.prices.append((float(1e-6), datetime.datetime.now()))
 
 	def get_name(self):
 		return self.name

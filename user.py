@@ -11,7 +11,7 @@ class User:
 	retrieved_cards = []
 	interesting_cards = []
 	price_difference = 0.01 # 1%
-	timeout_seconds = 3600 # 1 hour
+	timeout_seconds = 10 # 1 hour
 
 	def __init__(self, new_id):
 		if new_id <= 0:
@@ -46,7 +46,7 @@ class User:
 			if price_changed:
 				message += "<a href=\"" + c.get_url() + "\"><b>" + c.get_name() + "</b></a> has changed price to " + str(c.get_last_update()).replace(".", ",") + " €\n"
 
-		if message is not None:
+		if len(message) > 0:
 			context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
 	def force_update_price(self, card):

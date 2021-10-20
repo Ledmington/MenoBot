@@ -78,12 +78,12 @@ def get_my_cards(update, context):
 	message = "You are following " + str(len(my_cards)) + " cards.\n" + utils.compose_list(my_cards, with_index=True)
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
 
-def add_card(update, context) -> int:
-	if len(context.args) == 0:
-		context.bot.send_message(chat_id=update.effective_chat.id, text="No card name given.")
-		return
+def add_command(update, context) -> int:
+	context.bot.send_message(chat_id=update.effective_chat.id, text="Please type the string to search your card.")
+	return States.WAITING_TO_SEARCH_CARD
 
-	query_string = "+".join(context.args)
+def add_card(update, context) -> int:
+	query_string = "".join(update.message.text).replace(" ", "+")
 	page_content = utils.download_html(utils.CardMarketURLs["search_query"] + query_string)
 
 	current_user = user.users[update.effective_chat.id]
