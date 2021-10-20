@@ -37,3 +37,5 @@ class Card:
 		if len(oldest) > 0:
 			for old in oldest:
 				self.prices.remove(old)
+
+		return new_price
