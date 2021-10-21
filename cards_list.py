@@ -90,7 +90,7 @@ def add_card(update, context) -> int:
 	current_user.retrieved_cards = utils.parse_cards(page_content)
 
 	if len(current_user.retrieved_cards) == 0:
-		context.bot.send_message(chat_id=update.effective_chat.id, text="No cards found.")
+		context.bot.send_message(chat_id=update.effective_chat.id, text="No cards found.\nType a new string to search your card.")
 		return
 
 	# We keep only the first 5 results (the number should be global and changeable)

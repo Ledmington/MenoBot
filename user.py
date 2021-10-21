@@ -1,6 +1,7 @@
 import threading
 import time
 import utils
+import datetime
 
 users = {}
 
@@ -11,7 +12,7 @@ class User:
 	retrieved_cards = []
 	interesting_cards = []
 	price_difference = 0.01 # 1%
-	timeout_seconds = 10 # 1 hour
+	timeout_seconds = 600 # 10 minutes
 
 	def __init__(self, new_id):
 		if new_id <= 0:
@@ -40,11 +41,17 @@ class User:
 			time_passed += 10
 
 	def update_all_prices(self, update, context):
+		print("[" + str(datetime.datetime.now()) + "] Called update_all_prices from " + str(self.user_id))
 		message = ""
 		for c in self.interesting_cards:
 			price_changed = self.force_update_price(c)
-			if price_changed:
-				message += "<a href=\"" + c.get_url() + "\"><b>" + c.get_name() + "</b></a> has changed price to " + str(c.get_last_update()).replace(".", ",") + " €\n"
+			if price_changed != 0:
+				message += "<a href=\"" + c.get_url() + "\"><b>" + c.get_name() + "</b></a> has "
+				if price_changed > 0:
+					message += "increased"
+				else:
+					message += "decreased"
+				message += " price to " + str(c.get_last_update()).replace(".", ",") + " €\n"
 
 		if len(message) > 0:
 			context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
@@ -54,7 +61,13 @@ class User:
 		last_price = card.get_last_update()
 		card.update_price(new_price)
 
-		return abs(new_price - last_price) / min(new_price, last_price) >= self.price_difference
+		price_change = (new_price - last_price) / last_price
+		if abs(price_change) < self.price_difference:
+			price_change = 0
+		else:
+			price_change /= abs(price_change)
+
+		return price_change
 
 	def remove_card(self, card_idx):
 		removed_card = self.interesting_cards.pop(card_idx)
