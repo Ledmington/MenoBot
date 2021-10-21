@@ -60,6 +60,7 @@ class User:
 		new_price = utils.download_price(card.get_url())
 		last_price = card.get_last_update()
 		card.update_price(new_price)
+		card.delete_old_prices()
 
 		price_change = (new_price - last_price) / last_price
 		if abs(price_change) < self.price_difference:

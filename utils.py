@@ -62,6 +62,7 @@ def compose_list(cards, with_index=False):
 		if with_index:
 			message += "<b>" + str(cards.index(c)+1) + "</b> "
 		if type(c) == type(Card("", "")):
+			print(str(car))
 			message += "<a href=\"" + c.get_url() + "\">" + c.get_name() + "</a>\n"
 		else:
 			message += "<a href=\"" + CardMarketURLs["base"] + c[1] + "\">" + c[0] + "</a>\n"
