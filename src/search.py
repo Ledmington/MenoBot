@@ -1,12 +1,15 @@
+from telegram.ext import ConversationHandler
+
 import utils
+from bot_states import States
 
-def search_card(update, context):
+def search_command(update, context) -> int:
+	context.bot.send_message(chat_id=update.effective_chat.id, text="Type the name of a card to search.")
+	return States.WAITING_CARD_TO_SEARCH
 
-	if len(context.args) == 0:
-		context.bot.send_message(chat_id=update.effective_chat.id, text="No query given.")
-		return
+def search_card(update, context) -> int:
 
-	query_string = "+".join(context.args)
+	query_string = "+".join(update.message.text)
 	page_content = utils.download_html(utils.CardMarketURLs["search_query"] + query_string)
 
 	cards = utils.parse_cards(page_content)
@@ -20,3 +23,5 @@ def search_card(update, context):
 	
 	message = utils.compose_list(cards)
 	context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode="HTML", disable_web_page_preview=True)
+
+	return ConversationHandler.END
