@@ -63,7 +63,7 @@ if __name__ == "__main__":
 		pass
 	finally:
 		users_to_kill = list(user.users.values())
-		print(str(len(users_to_kill)) + " user objects to kill\n")
+		print(str(len(users_to_kill)) + " price-updater threads to kill\n")
 		for u in users_to_kill:
 			u.thread_needs_to_be_alive = False
 
