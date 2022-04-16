@@ -1,0 +1,4 @@
+[run]
+omit =
+    menobot/tests/*
+    **/__init__.py
