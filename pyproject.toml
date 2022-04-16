@@ -5,7 +5,7 @@ description = "Python-Poetry template"
 authors = ["Ledmington <ledmington.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 python-telegram-bot = "^13.11"
 
 [tool.poetry.dev-dependencies]
