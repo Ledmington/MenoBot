@@ -1,4 +1,9 @@
+import logging
+
+
 def help_command(update, context):
+    logger = logging.getLogger("menobot")
+    logger.info(f"Received /help from {update.effective_chat.id}")
     help_message = """Available commands:
 					  <b>help</b> - Show a list of available commands
 					  <b>list_most_wanted_cards</b> - Show most wanted cards on CardMarket
