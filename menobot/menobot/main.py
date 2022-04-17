@@ -22,6 +22,8 @@ from menobot.utils.formatter import CustomFormatter
 from menobot.utils.worker import Worker
 
 price_updater_thread = None
+users_to_cards = {}
+cards = {}
 
 
 def setup_logger():
@@ -117,10 +119,12 @@ def main() -> None:
 
 def price_update_loop():
     logger = logging.getLogger("menobot")
+    logger.info("Start price update")
     for uid, u in user.users.items():
         if (datetime.now() - u.last_update).seconds >= u.timeout_seconds:
             logger.info(f"Updating prices for user {uid}")
             u.update_all_prices()  # absolutely change this
+    logger.info("End price update")
     time.sleep(10)
 
 

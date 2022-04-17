@@ -19,7 +19,7 @@ format:
 	${RUN} black .
 
 todo:
-	find . | grep .py$$ | grep -rnw . -e TODO
+	find ./menobot | grep .py$$ | grep -rnw . -e TODO
 
 clean:
 	rm -rf cov_report dist .idea .ipynb_checkpoints logs
