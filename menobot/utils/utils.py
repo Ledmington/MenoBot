@@ -2,7 +2,8 @@ import urllib.request
 from urllib.error import HTTPError, URLError
 import re
 import logging
-from card import Card
+
+from menobot.menobot.card import Card
 
 cards_regex = re.compile(r"(<a href=\"\S*\">[\w\s\d\-\.\,\?\!\:\@\'\&\/\(\)]+<\/a>)")
 

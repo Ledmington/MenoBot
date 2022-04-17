@@ -1,7 +1,8 @@
 import threading
 import time
-import utils
 import datetime
+
+from menobot.utils import utils
 
 users = {}
 

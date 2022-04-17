@@ -8,6 +8,7 @@ from telegram.ext import (
 
 import logging
 import os
+import sys
 
 import help  # Command
 import cards_list  # Command
@@ -15,6 +16,30 @@ import search  # Command
 from bot_states import States
 
 import user
+from menobot.utils.formatter import CustomFormatter
+
+
+def setup_logger():
+    # create logs directory
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
+
+    logger = logging.getLogger("menobot")
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        "[%(asctime)s][%(levelname)s]: %(message)s", "%m-%d-%Y %H:%M:%S"
+    )
+
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.DEBUG)
+    stdout_handler.setFormatter(CustomFormatter())
+
+    file_handler = logging.FileHandler("logs/menobot.log")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(stdout_handler)
 
 
 def main() -> None:
@@ -27,12 +52,14 @@ def main() -> None:
     with open(token_filename, "r") as token_file:
         mytoken = token_file.read()
 
+    setup_logger()
+    logger = logging.getLogger("menobot")
+    logger.info("Started new session")
+
     updater = Updater(token=mytoken, use_context=True)
     dispatcher = updater.dispatcher
-    logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO,
-    )
+
+    logger.info("Initialized scheduler")
 
     conv_handler = ConversationHandler(
         entry_points=[
@@ -77,10 +104,19 @@ def main() -> None:
 
 
 def start_command(update, context):
+    logger = logging.getLogger("menobot")
     user_id = update.effective_chat.id
+    logger.info(f"Received /start from {user_id}")
     if user_id not in user.users.keys():
         user.users[user_id] = user.User(user_id)
+        logger.info(f"New User created with id {user_id}")
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Welcome to MenoBot, a Telegram bot designed to monitor price fluctuations of YuGiOh cards on cardmarket.\nYour ID is "
+            + str(user_id),
+        )
     else:
+        logger.info(f"User with id {user_id} was already present")
         context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="You are already registered.\nYour ID is " + str(user_id),
@@ -93,14 +129,15 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     finally:
+        logger = logging.getLogger("menobot")
         users_to_kill = list(user.users.values())
-        print(str(len(users_to_kill)) + " price-updater threads to kill\n")
+        logger.info(str(len(users_to_kill)) + " price-updater threads to kill\n")
         for u in users_to_kill:
             u.thread_needs_to_be_alive = False
 
         for u in users_to_kill:
             if u.price_updater_thread is not None:
-                print(
+                logger.info(
                     "["
                     + str(users_to_kill.index(u) + 1)
                     + "/"
@@ -108,3 +145,5 @@ if __name__ == "__main__":
                     + "] Waiting for price-updater thread to die..."
                 )
                 u.price_updater_thread.join()
+
+        logger.info("End session")

@@ -1,7 +1,7 @@
 from telegram.ext import ConversationHandler
 
-import utils
 from bot_states import States
+from menobot.utils import utils
 
 
 def search_command(update, context) -> int:

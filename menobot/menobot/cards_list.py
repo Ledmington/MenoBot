@@ -1,11 +1,11 @@
 from telegram.ext import ConversationHandler
-import utils
 import re
-from bot_states import States
-from card import Card
 import datetime
 
+from bot_states import States
+from card import Card
 import user
+from menobot.utils import utils
 
 need_to_be_alive = True
 price_updater_thread = None
