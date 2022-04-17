@@ -1,6 +1,6 @@
 from telegram.ext import ConversationHandler
 import re
-import datetime
+import logging
 
 from bot_states import States
 from card import Card
@@ -82,8 +82,12 @@ def update_price_command(update, context):
 
 
 def get_most_wanted_cards(update, context):
+    logger = logging.getLogger("menobot")
+    logger.info(f"Received /list_most_wanted_cards from {update.effective_chat.id}")
     page_content = utils.download_html(utils.CardMarketURLs["cards_list"])
     cards = utils.parse_cards(page_content)
+
+    logger.info(f"Retrieved {len(cards)} most wanted cards")
 
     message = utils.compose_list(cards)
     context.bot.send_message(
