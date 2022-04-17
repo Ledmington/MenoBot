@@ -112,6 +112,9 @@ def get_my_cards(update, context):
         return
 
     my_cards = user.users[user_id].get_interesting_cards()
+
+    logging.info(f"The user {user_id} is following {len(my_cards)} cards: {my_cards}")
+
     if len(my_cards) == 0:
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="You are following 0 cards."

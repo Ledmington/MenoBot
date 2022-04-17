@@ -16,6 +16,9 @@ class Card:
         self.__url = card_url
         self.__prices = [(float(1e-6), datetime.datetime.now())]
 
+    def __str__(self):
+        return "Card(name=" + self.__name + ", url=" + self.__url + ")"
+
     def get_name(self):
         return self.__name
 
