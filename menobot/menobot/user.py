@@ -1,25 +1,24 @@
-import threading
-import time
-import datetime
+from datetime import datetime
+import logging
 
 from menobot.utils import utils
 
 users = {}
+logger = logging.getLogger("menobot")
 
 
 class User:
-    user_id = -1
-    thread_needs_to_be_alive = True
-    price_updater_thread = None
-    retrieved_cards = []
-    interesting_cards = []
     price_difference = 0.01  # 1%
     timeout_seconds = 600  # 10 minutes
 
     def __init__(self, new_id):
         if new_id <= 0:
+            logger.exception(f"Attempting to create a User with id {new_id}")
             raise ValueError("User Id cannot be zero or negative")
         self.user_id = new_id
+        self.retrieved_cards = []
+        self.interesting_cards = []
+        last_update = datetime.now()
 
     def get_interesting_cards(self):
         return self.interesting_cards
@@ -27,30 +26,6 @@ class User:
     def add_card(self, new_card, update, context):
         self.interesting_cards.append(new_card)
         self.interesting_cards = list(set(self.interesting_cards))
-
-        if self.price_updater_thread == None:
-            self.thread_needs_to_be_alive = True
-            self.price_updater_thread = threading.Thread(
-                target=self.__updater_thread_function__,
-                args=(
-                    update,
-                    context,
-                ),
-            )
-            self.price_updater_thread.start()
-
-    def __updater_thread_function__(
-        self,
-        update,
-        context,
-    ):
-        time_passed = 0
-        while self.thread_needs_to_be_alive == True:
-            if time_passed >= self.timeout_seconds:
-                time_passed = 0
-                self.update_all_prices(update, context)
-            time.sleep(10)
-            time_passed += 10
 
     def update_all_prices(self, update, context):
         print(
@@ -106,6 +81,3 @@ class User:
             self.price_updater_thread = None
 
         return removed_card
-
-    def get_timeout(self):
-        return self.timeout_seconds

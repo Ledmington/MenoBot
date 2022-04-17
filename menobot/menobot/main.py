@@ -9,6 +9,8 @@ from telegram.ext import (
 import logging
 import os
 import sys
+import time
+from datetime import datetime
 
 import help  # Command
 import cards_list  # Command
@@ -17,6 +19,9 @@ from bot_states import States
 
 import user
 from menobot.utils.formatter import CustomFormatter
+from menobot.utils.worker import Worker
+
+price_updater_thread = None
 
 
 def setup_logger():
@@ -99,10 +104,24 @@ def main() -> None:
 
     dispatcher.add_handler(conv_handler)
 
+    logger.info("Creating price updater thread")
+    price_updater_thread = Worker(price_update_loop)
+    price_updater_thread.start()
+    logger.info("Price updater thread created")
+
     logger.info("MenoBot ready")
 
     updater.start_polling()
     updater.idle()
+
+
+def price_update_loop():
+    logger = logging.getLogger("menobot")
+    for uid, u in user.users.items():
+        if (datetime.now() - u.last_update).seconds >= u.timeout_seconds:
+            logger.info(f"Updating prices for user {uid}")
+            u.update_all_prices()  # absolutely change this
+    time.sleep(10)
 
 
 def start_command(update, context):
@@ -132,20 +151,8 @@ if __name__ == "__main__":
         pass
     finally:
         logger = logging.getLogger("menobot")
-        users_to_kill = list(user.users.values())
-        logger.info(str(len(users_to_kill)) + " price-updater threads to kill")
-        for u in users_to_kill:
-            u.thread_needs_to_be_alive = False
-
-        for u in users_to_kill:
-            if u.price_updater_thread is not None:
-                logger.info(
-                    "["
-                    + str(users_to_kill.index(u) + 1)
-                    + "/"
-                    + str(len(users_to_kill))
-                    + "] Waiting for price-updater thread to die..."
-                )
-                u.price_updater_thread.join()
+        logger.info("Waiting for price updater thread to die")
+        price_updater_thread.join()
+        logger.info("price updater thread is dead")
 
         logger.info("End session\n")
