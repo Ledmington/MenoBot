@@ -99,7 +99,19 @@ def get_most_wanted_cards(update, context):
 
 
 def get_my_cards(update, context):
-    my_cards = user.users[update.effective_chat.id].get_interesting_cards()
+    user_id = update.effective_chat.id
+    logger = logging.getLogger("menobot")
+    logger.info(f"Received /list_my_cards from {user_id}")
+
+    if user_id not in user.users:
+        logger.warning(f"User {user_id} not present")
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="You are not registered. Please type /start",
+        )
+        return
+
+    my_cards = user.users[user_id].get_interesting_cards()
     if len(my_cards) == 0:
         context.bot.send_message(
             chat_id=update.effective_chat.id, text="You are following 0 cards."

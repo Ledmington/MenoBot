@@ -99,6 +99,8 @@ def main() -> None:
 
     dispatcher.add_handler(conv_handler)
 
+    logger.info("MenoBot ready")
+
     updater.start_polling()
     updater.idle()
 
@@ -131,7 +133,7 @@ if __name__ == "__main__":
     finally:
         logger = logging.getLogger("menobot")
         users_to_kill = list(user.users.values())
-        logger.info(str(len(users_to_kill)) + " price-updater threads to kill\n")
+        logger.info(str(len(users_to_kill)) + " price-updater threads to kill")
         for u in users_to_kill:
             u.thread_needs_to_be_alive = False
 
@@ -146,4 +148,4 @@ if __name__ == "__main__":
                 )
                 u.price_updater_thread.join()
 
-        logger.info("End session")
+        logger.info("End session\n")
