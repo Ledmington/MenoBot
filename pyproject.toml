@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "menobot"
+name = "MenoBot"
 version = "0.1.0"
-description = "Python-Poetry template"
+description = "A Telegram Bot to monitor price fluctuations of YuGiOh cards on cardmarket."
 authors = ["Ledmington <ledmington.dev@gmail.com>"]
 
 [tool.poetry.dependencies]
