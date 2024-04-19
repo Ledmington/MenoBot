@@ -1,0 +1,46 @@
+Aggiungere espansioni
+
+change interaction for update_price
+change interaction for set_timeout
+
+/show_trend_month
+/show_trend_week
+/show_trend_today
+mostra con un grafico l'andamento del prezzo di una certa carta nell'ultimo mese,
+nell'ultima settimana o nelle ultime 24h (l'ultima opzione è disponibile solo se
+il timeout è inferiore a 12h)
+tutti e tre i comandi restituiscono la lista delle carte "interessanti" con tanto
+di numero identificativo
+l'utente scrive il numero identificativo e il bot restituisce il plot
+
+/report
+Stampa i cambiamenti solo delle carte che sono cambiate "abbastanza"
+
+/set_min_change
+il cambiamento minimo di prezzo perchè sia considerato cambiato
+default=0.50
+min=0
+
+/searchITA
+/searchENG
+
+
+in genere
+solo venditori dall'italia
+carte in lingua inglese o italiana
+minCondition=3
+Però questa roba visualizza le offerte e si allontana dallo scopo di questo bot
+
+
+
+Messaggio per BotFather
+start - Start the conversation
+help - Show a list of available commands
+list_most_wanted_cards - Show most wanted cards on CardMarket
+list_my_cards - Show the cards you are following
+add - Start following a card
+remove - Stop following a card
+search - Looks for a card on CardMarket
+update_price - Forces price update of a card
+update_prices - Forces price update of all cards
+set_timeout - Changes time to wait between price updates
