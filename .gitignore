@@ -1,7 +1,8 @@
-telegram_token
+**/*token*
 cov_report/
 .coverage*
 **/.pytest_cache
 **/__pycache__
 dist/
 logs/
+.idea/
