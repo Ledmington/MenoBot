@@ -14,7 +14,7 @@ class Card:
     def __init__(self, card_name, card_url):
         self.__name = card_name
         self.__url = card_url
-        self.__prices = [(float(1e-6), datetime.datetime.now())]
+        self.__prices = []
 
     def __str__(self):
         return "Card(name=" + self.__name + ", url=" + self.__url + ")"
