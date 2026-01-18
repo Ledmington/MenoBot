@@ -21,7 +21,7 @@ def test_price_cannot_be_negative():
 
 
 def test_new_card_has_no_price():
-    c = Card("test", "ttps://test.com")
+    c = Card("test", "https://test.com")
     assert c.get_prices() == []
 
 
